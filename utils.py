@@ -28,10 +28,11 @@ def output_psnr_mse(img_orig, img_out):
 
 def is_image_file(filename):
   filename_lower = filename.lower()
-  return any(filename_lower.endswith(extension) for extension in ['.png', '.jpg', '.bmp', '.mat'])
+  return any(filename_lower.endswith(extension) for extension in ['.png', '.jpg', '.bmp', '.mat', '.jpeg'])
 
 
 def load_all_image(path):
+  print(listdir(path))
   return [join(path, x) for x in listdir(path) if is_image_file(x)]
 
 

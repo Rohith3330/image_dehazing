@@ -15,17 +15,21 @@ parser.add_argument("--rb", type=int, default=13, help="number of residual block
 parser.add_argument("--checkpoint", type=str, help="path to load model checkpoint")
 parser.add_argument("--test", type=str, help="path to load test images")
 
+print("pt1")
 opt = parser.parse_args()
 print(opt)
+print("pt2")
 
 net = Net(opt.rb)
 net.load_state_dict(torch.load(opt.checkpoint)['state_dict'])
 net.eval()
-net = nn.DataParallel(net, device_ids=[0, 1, 2, 3]).cuda()
+net = nn.DataParallel(net, device_ids=[0, 1, 2, 3])
 
-print(net)
+# print(net)
 
 images = utils.load_all_image(opt.test)
+print(opt.test)
+print("pt3 ",images)
 
 for im_path in tqdm(images):
     filename = im_path.split('/')[-1]
@@ -35,11 +39,13 @@ for im_path in tqdm(images):
     print(h, w)
     im = ToTensor()(im)
     im = Variable(im).view(1, -1, w, h)
-    im = im.cuda()
+    # im = im
     with torch.no_grad():
         im = net(im)
     im = torch.clamp(im, 0., 1.)
     im = im.cpu()
     im = im.data[0]
     im = ToPILImage()(im)
+    print("wtf")
+    im.show()
     im.save('output/%s' % filename)
